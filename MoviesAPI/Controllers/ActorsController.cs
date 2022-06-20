@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesAPI.CloudServices;
@@ -111,6 +112,40 @@ namespace MoviesAPI.Controllers
             context.Remove(new Actor() { Id = id });
             await context.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<ActorPatchDTO> patchDocument )
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var entityDB = await context.Actors.FirstOrDefaultAsync(x=>x.Id ==id);
+
+            if (entityDB == null)
+            {
+                return NotFound();
+            }
+
+            var entityDTO = mapper.Map<ActorPatchDTO>(entityDB);
+
+            patchDocument.ApplyTo(entityDTO, ModelState);
+
+            var isValid = TryValidateModel(entityDTO);
+
+            if (!isValid)
+            {
+                return BadRequest();
+            }
+
+            mapper.Map(entityDTO, entityDB);
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
+
         }
     }
 }
