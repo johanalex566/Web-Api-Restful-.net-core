@@ -25,7 +25,7 @@ namespace MoviesAPI
             services.AddAutoMapper(typeof(Startup));
 
            // services.AddTransient<IFileStorage, FileStorage>();
-            services.AddTransient<IFileStorage, LocalFileStorage>();
+            services.AddTransient<IFileStorage, FileStorage>();
             services.AddHttpContextAccessor();
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
