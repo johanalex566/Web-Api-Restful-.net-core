@@ -70,7 +70,7 @@ namespace MoviesAPI.Controllers
 
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromForm] ActorCreationDTO actorCreationDTO)
         {
             var actorDB = await context.Actors.FirstOrDefaultAsync(x => x.Id == id);
